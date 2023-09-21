@@ -7,10 +7,15 @@ Does it get stuck or it does show any errors? Resolve it diy.
 ## Usage
 
 On Windows:
-```cmd
+```batch
 powershell RemoveYourselfFromTeam.ps1
 ```
 On MacOS or Linux (install before powershell)
-```bash
+```sh
 pwsh RemoveYourselfFromTeam.ps1
 ```
+
+## todo list:
+
+- Make args 
+    - install modules
