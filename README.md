@@ -1,21 +1,17 @@
-# MS-RemoveYourselfFromATeam
+# letMeRemove - Remove yourself from Microsoft Teams
 
-I've made this prototype with no error handling. 
+A Powershell script that allows removing yourself from a one or multiple Teams since Microsoft doesn't allow this through doing by the official UI. (strange people... strange world...)
 
-Does it get stuck or it does show any errors? Resolve it diy.
+Open a pull request for any type of errors.
 
 ## Usage
 
 On Windows:
 ```batch
-powershell RemoveYourselfFromTeam.ps1
+powershell letMeRemove.ps1
 ```
 On MacOS or Linux (install before powershell)
 ```sh
-pwsh RemoveYourselfFromTeam.ps1
+pwsh letMeRemoves.ps1
 ```
 
-## todo list:
-
-- Make args 
-    - install modules
