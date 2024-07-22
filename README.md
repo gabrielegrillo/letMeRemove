@@ -12,6 +12,6 @@ powershell letMeRemove.ps1
 ```
 On MacOS or Linux (install before powershell)
 ```sh
-pwsh letMeRemoves.ps1
+pwsh letMeRemove.ps1
 ```
 
