@@ -10,7 +10,7 @@ On Windows:
 ```batch
 powershell letMeRemove.ps1
 ```
-On MacOS or Linux (install before powershell)
+On MacOS or Linux (make sure that you've installed powershell)
 ```sh
 pwsh letMeRemove.ps1
 ```
