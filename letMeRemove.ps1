@@ -4,13 +4,10 @@
 $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
 $moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
 
-if ($moduleGet -and $moduleTeams) {
-    Write-Host "Modules found."
-}
-else {
+if (!($moduleGet -and $moduleTeams)) {
     Write-Host "Trying to install modules..."
     Install-Module -Name PowerShellGet -Force -AllowClobber
-   Get-Module -ListAvailable -Name PowerShellGet
+    Get-Module -ListAvailable -Name PowerShellGet
     
     # Recheck if the modules are installed correctly
     $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
@@ -20,7 +17,8 @@ else {
       Write-Host "Failed to install module PowerShellGet and/or MicrosoftTeams.`nTry do it yourself by:`nInstall-Module -Name PowerShellGet -Force -AllowClobber`nInstall-Module -Name MicrosoftTeams -Force -AllowClobber"
       Exit
     }
- }
+}
+
 
 # Connect and get the email.
 Write-Host "Log-in in your browser."
@@ -36,7 +34,7 @@ $all_teams = Get-Team -User $acc
 
 # List all the team enrolled
 for ($i = 0; $i -lt $all_teams.Length; $i++) {
-    Write-Host ($i + 1)")" $all_teams[$i].DisplayName
+    Write-Host ($i + 1)")"$all_teams[$i].DisplayName
 }
 
 # choice of 
