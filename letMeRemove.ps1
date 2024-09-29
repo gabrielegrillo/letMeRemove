@@ -60,11 +60,9 @@ if ($choiceMulti -eq 1)  {
     $teams = $choiceTeams -split ','
     # Write-Host $teams 
     for ($i = 0; $i -lt $teams.Count; $i++) {
-        $groupId = $all_teams[($teams[($i-1)])].GroupId 
-        Write-Host $i 
-        Write-Host $groupId
-        # Remove-TeamUser -GroupId $groupId -User $acc
-        Write-Host "Removed from: " $all_teams[($teams[$i])].DisplayName
+        $groupId = $all_teams[($teams[$i])-1].GroupId 
+        Remove-TeamUser -GroupId $groupId -User $acc
+        Write-Host "Removed from:" $all_teams[($teams[$i])-1].DisplayName
     }
 }
 Write-Host "Disconnecting from Teams..."
