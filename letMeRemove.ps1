@@ -34,34 +34,37 @@ $all_teams = Get-Team -User $acc
 
 # List all the team enrolled
 for ($i = 0; $i -lt $all_teams.Length; $i++) {
-    Write-Host ($i + 1)")"$all_teams[$i].DisplayName
+    Write-Output "$(($i+1))) $($all_teams[$i].DisplayName)"
 }
 
 # choice of 
 
-$choiceMulti = Read-Host "Do you want to remove from one team or multiple teams?`n(0 one team, 1 mutiple teams): "
+$choiceMulti = Read-Host "Do you want to remove from one team or multiple teams?`n(0 one team, 1 multiple teams)"
 while ($true) {
     if ($choiceMulti -eq 0 -or $choiceMulti -eq 1) {
       break;
     }
     else {
       Write-Host "Input invalid."
-      $choiceMulti = Read-Host "Do you want to remove from one team or multiple teams?`n(0 one team, 1 mutiple teams): "
+      $choiceMulti = Read-Host "Do you want to remove from one team or multiple teams?`n(0 one team, 1 multiple teams)"
     }
 }
 
 if ($choiceMulti -eq 0) {
-    $choiceTeam = Read-Host "Select the team: "
+    $choiceTeam = Read-Host "Select the team"
     $groupId = $all_teams[($choiceTeam - 1)].GroupId 
     Remove-TeamUser -GroupId $groupId -User $acc
 }
 if ($choiceMulti -eq 1)  {
-    $choiceTeams = Read-Host "Select the teams, separeted by ',': "
+    $choiceTeams = Read-Host "Select the teams, separeted by ','"
     $teams = $choiceTeams -split ','
+    # Write-Host $teams 
     for ($i = 0; $i -lt $teams.Count; $i++) {
-        $groupId = $all_teams[($i - 1)].GroupId 
-        Remove-TeamUser -GroupId $groupId -User $acc
-        Write-Host "Removed from: " $all_teams[($i - 1)].DisplayName
+        $groupId = $all_teams[($teams[($i-1)])].GroupId 
+        Write-Host $i 
+        Write-Host $groupId
+        # Remove-TeamUser -GroupId $groupId -User $acc
+        Write-Host "Removed from: " $all_teams[($teams[$i])].DisplayName
     }
 }
 Write-Host "Disconnecting from Teams..."
