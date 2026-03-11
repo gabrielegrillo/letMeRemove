@@ -28,29 +28,39 @@ if (-not $moduleGet -or -not $moduleTeams) {
 
 Write-SpectreHost "[cyan]=== letMeRemove 🚪 ===[/]`n"
 Write-SpectreHost "[yellow]Log-in in your browser...[/]"
-$acc = Connect-MicrosoftTeams | Select-Object -ExpandProperty "Account"
+$script:acc = $null
 
-if (-not $acc) {
+Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Connecting to Microsoft Teams..." -ScriptBlock {
+    $script:acc = Connect-MicrosoftTeams | Select-Object -ExpandProperty "Account"
+}
+
+if (-not $script:acc) {
   Write-SpectreHost "[red]Impossible to connect to the Microsoft Account.[/]"
   Exit
 }
 
-Write-SpectreHost "[green]Logged in with:[/] $acc`n"
-$all_teams = Get-Team -User $acc
+Write-SpectreHost "[green]Logged in with:[/] $script:acc`n"
 
-if (-not $all_teams) {
+$script:all_teams = $null
+
+Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Fetching your teams..." -ScriptBlock {
+    $script:all_teams = Get-Team -User $acc -ProgressAction SilentlyContinue
+}
+
+
+if (-not $script:all_teams) {
     Write-SpectreHost "[red]No teams found for this account. Exiting.[/]"
     Disconnect-MicrosoftTeams
     Exit
 }
 
 # Display enrolled teams as a table
-$tableData = for ($i = 0; $i -lt $all_teams.Count; $i++) {
-    [PSCustomObject]@{ "#" = $i + 1; Team = $all_teams[$i].DisplayName }
+$tableData = for ($i = 0; $i -lt $script:all_teams.Count; $i++) {
+    [PSCustomObject]@{ "#" = $i + 1; Team = $script:all_teams[$i].DisplayName }
 }
 Format-SpectreTable -Data $tableData -Title "Enrolled Teams" -Color "cyan"
 
-$teamNames = $all_teams | ForEach-Object { $_.DisplayName }
+$teamNames = $script:all_teams | ForEach-Object { $_.DisplayName }
 
 # choice of 
 
@@ -66,10 +76,10 @@ if ($modeChoice -eq "One team") {
         -Choices $teamNames `
         -Color "yellow"
 
-    $team = $all_teams | Where-Object { $_.DisplayName -eq $selectedTeam }
+    $team = $script:all_teams | Where-Object { $_.DisplayName -eq $selectedTeam }
 
     Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Removing you from [yellow]$selectedTeam[/]..." -ScriptBlock {
-        Remove-TeamUser -GroupId $team.GroupId -User $acc
+        Remove-TeamUser -GroupId $team.GroupId -User $script:acc
     }
 
     Write-SpectreHost "[green]Removed from:[/] $selectedTeam`n"}
@@ -90,8 +100,8 @@ else {
         $task = $ctx.AddTask("[yellow]Removing from teams...[/]", $true, $selectedTeams.Count)
 
         foreach ($name in $selectedTeams) {
-            $team = $all_teams | Where-Object { $_.DisplayName -eq $name }
-            Remove-TeamUser -GroupId $team.GroupId -User $acc
+            $team = $script:all_teams | Where-Object { $_.DisplayName -eq $name }
+            Remove-TeamUser -GroupId $team.GroupId -User $script:acc
             Write-SpectreHost "[green]Removed from:[/] $name"
             $task.Increment(1)
         }
