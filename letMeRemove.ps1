@@ -4,19 +4,22 @@
 $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
 $moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
 
-if (!($moduleGet -and $moduleTeams)) {
-    Write-Host "Trying to install modules..."
-    Install-Module -Name PowerShellGet -Force -AllowClobber
-    Get-Module -ListAvailable -Name PowerShellGet
+if (-not $moduleGet -or -not $moduleTeams) {
+    Write-Host "Trying to install the missing modules..."
     
+    if (-not $moduleGet)   { Install-Module -Name PowerShellGet  -Force -AllowClobber }
+    if (-not $moduleTeams) { Install-Module -Name MicrosoftTeams -Force -AllowClobber }
+
     # Recheck if the modules are installed correctly
     $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
     $moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
     
-    if (-not ($moduleGet -and $moduleTeams)) {
+    if (-not $moduleGet -or -not $moduleTeams) {
       Write-Host "Failed to install module PowerShellGet and/or MicrosoftTeams.`nTry do it yourself by:`nInstall-Module -Name PowerShellGet -Force -AllowClobber`nInstall-Module -Name MicrosoftTeams -Force -AllowClobber"
       Exit
     }
+
+    Write-Host "All required modules are installed! :)"
 }
 
 
