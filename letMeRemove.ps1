@@ -3,6 +3,12 @@
 # check if it works on windows
 $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
 $moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
+
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    Write-Error "PowerShell 7 or higher is required. Current version: $($PSVersionTable.PSVersion)"
+    Exit 1
+}
+
 $moduleSpectre = Get-Module -ListAvailable -Name PwshSpectreConsole
 
 if (-not $moduleGet -or -not $moduleTeams) {
