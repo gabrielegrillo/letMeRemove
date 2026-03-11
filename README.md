@@ -4,7 +4,6 @@
 
 A PowerShell script that lets you remove yourself from one or multiple Microsoft Teams — something the official UI inexplicably does not support.
 
----
 
 ## ✨ Features
 
@@ -12,14 +11,12 @@ A PowerShell script that lets you remove yourself from one or multiple Microsoft
 - Works cross-platform: Windows, macOS, and Linux
 - No admin privileges or third-party apps required — just PowerShell
 
----
 
 ## 📋 Prerequisites
 
 - **Windows**: PowerShell is built in — no setup needed.
 - **macOS / Linux**: Install [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) first.
 
----
 
 ## 🚀 Usage
 
@@ -33,7 +30,6 @@ powershell letMeRemove.ps1
 pwsh letMeRemove.ps1
 ```
 
----
 
 ## 🤝 Contributing
 
@@ -43,14 +39,9 @@ Found a bug or have an improvement in mind? Pull requests are welcome for any ty
 3. Commit your changes
 4. Open a Pull Request
 
----
+
 
 ## ⚠️ Disclaimer
 
 This script uses the Microsoft Teams API indirectly. Use at your own discretion. Functionality may break if Microsoft changes their internal APIs.
 
----
-
-## 📄 License
-
-GNU GPLv3
