@@ -60,7 +60,7 @@ $tableData = for ($i = 0; $i -lt $script:all_teams.Count; $i++) {
 }
 Format-SpectreTable -Data $tableData -Title "Enrolled Teams" -Color "cyan"
 
-$teamNames = $script:all_teams | ForEach-Object { $_.DisplayName }
+$script:teamNames = $script:all_teams | ForEach-Object { $_.DisplayName }
 
 # choice of 
 
@@ -73,20 +73,20 @@ $modeChoice = Read-SpectreSelection `
 if ($modeChoice -eq "One team") {
     $selectedTeam = Read-SpectreSelection `
         -Title "Select a team to remove yourself from" `
-        -Choices $teamNames `
+        -Choices $script:teamNames `
         -Color "yellow"
 
-    $team = $script:all_teams | Where-Object { $_.DisplayName -eq $selectedTeam }
-
-    Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Removing you from [yellow]$selectedTeam[/]..." -ScriptBlock {
-        Remove-TeamUser -GroupId $team.GroupId -User $script:acc
+    $script:team = $script:all_teams | Where-Object { $_.DisplayName -eq $selectedTeam }
+    $script:escapedName = [PoshSpectreConsole.SpectreConsoleHelpers]::EscapeMarkup($selectedTeam)
+    Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Removing you from [yellow]$escapedName[/]..." -ScriptBlock {
+        Remove-TeamUser -GroupId $script:team.GroupId -User $script:acc
     }
 
-    Write-SpectreHost "[green]Removed from:[/] $selectedTeam`n"}
+    Write-SpectreHost "[green]Removed from:[/] $script:escapedName`n"}
 else {
      $selectedTeams = Read-SpectreMultiSelection `
         -Title "Select teams to remove yourself from [grey](SPACE to select, ENTER to confirm)[/]" `
-        -Choices $teamNames `
+        -Choices $script:teamNames `
         -Color "yellow"
 
     if (-not $selectedTeams) {
@@ -100,8 +100,8 @@ else {
         $task = $ctx.AddTask("[yellow]Removing from teams...[/]", $true, $selectedTeams.Count)
 
         foreach ($name in $selectedTeams) {
-            $team = $script:all_teams | Where-Object { $_.DisplayName -eq $name }
-            Remove-TeamUser -GroupId $team.GroupId -User $script:acc
+            $script:team = $script:all_teams | Where-Object { $_.DisplayName -eq $name }
+            Remove-TeamUser -GroupId $script:team.GroupId -User $script:acc
             Write-SpectreHost "[green]Removed from:[/] $name"
             $task.Increment(1)
         }
