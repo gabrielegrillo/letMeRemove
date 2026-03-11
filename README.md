@@ -14,7 +14,7 @@ A PowerShell script that lets you remove yourself from one or multiple Microsoft
 
 ## 📋 Prerequisites
 
-- **Windows**: PowerShell is built in — no setup needed.
+- **Windows**: PowerShell 7 
 - **macOS / Linux**: Install [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) first.
 
 
