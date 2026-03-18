@@ -1,6 +1,5 @@
 # TODO:
-# Paramaters 
-# check if it works on windows
+# Parameters 
 $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
 $moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
 
@@ -11,7 +10,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 
 $moduleSpectre = Get-Module -ListAvailable -Name PwshSpectreConsole
 
-if (-not $moduleGet -or -not $moduleTeams) {
+if (-not $moduleGet -or -not $moduleTeams -or -not $moduleSpectre) {
     Write-Host "Trying to install the missing modules..."
     
     if (-not $moduleGet)   { Install-Module -Name PowerShellGet  -Force -AllowClobber }
@@ -23,6 +22,11 @@ if (-not $moduleGet -or -not $moduleTeams) {
     
     if (-not $moduleGet -or -not $moduleTeams) {
       Write-Host "Failed to install module PowerShellGet and/or MicrosoftTeams.`nTry do it yourself by:`nInstall-Module -Name PowerShellGet -Force -AllowClobber`nInstall-Module -Name MicrosoftTeams -Force -AllowClobber"
+      Exit
+    }
+
+    if (-not $moduleSpectre) {
+      Write-Host "Failed to install module PwshSpectreConsole`nTry do it yourself by:`nInstall-Module -Name PwshSpectreConsole -Force -AllowClobber"
       Exit
     }
 
@@ -68,58 +72,47 @@ Format-SpectreTable -Data $tableData -Title "Enrolled Teams" -Color "cyan"
 
 $script:teamNames = $script:all_teams | ForEach-Object { $_.DisplayName }
 
-# choice of 
+# Selection 
+$selectedTeams = Read-SpectreMultiSelection `
+    -Title "Select teams to remove yourself from [grey](SPACE to select, ENTER to confirm)[/]" `
+    -Choices $script:teamNames `
+    -Color "yellow"
 
-$modeChoice = Read-SpectreSelection `
-    -Title "Remove from one team or multiple teams?" `
-    -Choices @("One team", "Multiple teams") `
-    -Color "cyan"
-
-
-if ($modeChoice -eq "One team") {
-    $selectedTeam = Read-SpectreSelection `
-        -Title "Select a team to remove yourself from" `
-        -Choices $script:teamNames `
-        -Color "yellow"
-
-    $script:team = $script:all_teams | Where-Object { $_.DisplayName -eq $selectedTeam }
-    $script:escapedName = [PoshSpectreConsole.SpectreConsoleHelpers]::EscapeMarkup($selectedTeam)
-    Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Removing you from [yellow]$escapedName[/]..." -ScriptBlock {
-        Remove-TeamUser -GroupId $script:team.GroupId -User $script:acc
-    }
-
-    Write-SpectreHost "[green]Removed from:[/] $script:escapedName`n"}
-else {
-     $selectedTeams = Read-SpectreMultiSelection `
-        -Title "Select teams to remove yourself from [grey](SPACE to select, ENTER to confirm)[/]" `
-        -Choices $script:teamNames `
-        -Color "yellow"
-
-    if (-not $selectedTeams) {
-        Write-SpectreHost "[red]No teams selected. Exiting.[/]"
-        Disconnect-MicrosoftTeams
-        Exit
-    }
-
-    Invoke-SpectreCommandWithProgress -ScriptBlock {
-        param($ctx)
-        $task = $ctx.AddTask("[yellow]Removing from teams...[/]", $true, $selectedTeams.Count)
-
-        foreach ($name in $selectedTeams) {
-            $script:team = $script:all_teams | Where-Object { $_.DisplayName -eq $name }
-            Remove-TeamUser -GroupId $script:team.GroupId -User $script:acc
-            Write-SpectreHost "[green]Removed from:[/] $name"
-            $task.Increment(1)
-        }
-    }
-
-    # Summary table
-    $summary = $selectedTeams | ForEach-Object {
-        [PSCustomObject]@{ Team = $_; Status = "✓ Removed" }
-    }
-    Format-SpectreTable -Data $summary -Title "Summary" -Color "green"
+if (-not $selectedTeams) {
+    Write-SpectreHost "[red]No teams selected. Exiting.[/]"
+    Disconnect-MicrosoftTeams
+    Exit
 }
 
+# Confirmation
+$confirmData = $selectedTeams | ForEach-Object { [PSCustomObject]@{ Team = $_ } }
+Format-SpectreTable -Data $confirmData -Title "Teams to Leave" -Color "yellow"
+
+$confirm = Read-SpectreText `
+    -Prompt "Confirm leaving the above [yellow]$($selectedTeams.Count)[/] team(s)? [grey]\[y/N][/]" `
+    -AnswerColor "yellow"
+
+if ($confirm -notmatch '^[Yy]$') {
+    Write-SpectreHost "[grey]Aborted. No changes made.[/]"
+    Disconnect-MicrosoftTeams
+    Exit
+}
+
+Invoke-SpectreCommandWithProgress -ScriptBlock {
+    param($ctx)
+    $task = $ctx.AddTask("[yellow]Removing from teams...[/]", $true, $selectedTeams.Count)
+    foreach ($name in $selectedTeams) {
+        $script:team = $script:all_teams | Where-Object { $_.DisplayName -eq $name }
+        Remove-TeamUser -GroupId $script:team.GroupId -User $script:acc
+        Write-SpectreHost "[green]Removed from:[/] $name"
+        $task.Increment(1)
+    }
+}
+
+$summary = $selectedTeams | ForEach-Object {
+    [PSCustomObject]@{ Team = $_; Status = "[green]✓ Removed[/]" }
+}
+Format-SpectreTable -Data $summary -Title "Summary" -Color "green"
 
 Write-SpectreHost "`n[grey]Disconnecting from Teams...[/]"
 Disconnect-MicrosoftTeams
