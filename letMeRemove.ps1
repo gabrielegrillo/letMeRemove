@@ -89,7 +89,7 @@ $confirmData = $selectedTeams | ForEach-Object { [PSCustomObject]@{ Team = $_ } 
 Format-SpectreTable -Data $confirmData -Title "Teams to Leave" -Color "yellow"
 
 $confirm = Read-SpectreText `
-    -Prompt "Confirm leaving the above [yellow]$($selectedTeams.Count)[/] team(s)? [grey]\[y/N][/]" `
+    -Prompt "Confirm leaving the above [yellow]$($selectedTeams.Count)[/] team(s)? [grey][[y/N]][/]" `
     -AnswerColor "yellow"
 
 if ($confirm -notmatch '^[Yy]$') {
@@ -112,7 +112,7 @@ Invoke-SpectreCommandWithProgress -ScriptBlock {
 $summary = $selectedTeams | ForEach-Object {
     [PSCustomObject]@{ Team = $_; Status = "[green]✓ Removed[/]" }
 }
-Format-SpectreTable -Data $summary -Title "Summary" -Color "green"
+Format-SpectreTable -Data $summary -Title "Summary" -Color "green" -AllowMarkup
 
 Write-SpectreHost "`n[grey]Disconnecting from Teams...[/]"
 Disconnect-MicrosoftTeams
