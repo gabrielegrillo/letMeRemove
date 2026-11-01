@@ -1,118 +1,109 @@
-# TODO:
-# Parameters 
-$moduleGet = Get-Module -ListAvailable -Name PowerShellGet
-$moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
-
-if ($PSVersionTable.PSVersion.Major -lt 7) {
-    Write-Error "PowerShell 7 or higher is required. Current version: $($PSVersionTable.PSVersion)"
-    Exit 1
-}
-
-$moduleSpectre = Get-Module -ListAvailable -Name PwshSpectreConsole
-
-if (-not $moduleGet -or -not $moduleTeams -or -not $moduleSpectre) {
-    Write-Host "Trying to install the missing modules..."
-    
-    if (-not $moduleGet)   { Install-Module -Name PowerShellGet  -Force -AllowClobber }
-    if (-not $moduleTeams) { Install-Module -Name MicrosoftTeams -Force -AllowClobber }
-    if (-not $moduleSpectre) { Install-Module -Name PwshSpectreConsole -Force -AllowClobber }
-    # Recheck if the modules are installed correctly
-    $moduleGet = Get-Module -ListAvailable -Name PowerShellGet
-    $moduleTeams = Get-Module -ListAvailable -Name MicrosoftTeams
-    
-    if (-not $moduleGet -or -not $moduleTeams) {
-      Write-Host "Failed to install module PowerShellGet and/or MicrosoftTeams.`nTry do it yourself by:`nInstall-Module -Name PowerShellGet -Force -AllowClobber`nInstall-Module -Name MicrosoftTeams -Force -AllowClobber"
-      Exit
+#Requires -Version 7.2
+<#
+.SYNOPSIS
+Choose, review and leave your Microsoft Teams from the terminal.
+.DESCRIPTION
+Signs in through Microsoft's device-code flow by default. Rich terminals get
+live search, keyboard selection and animated activity. Plain mode is available
+for basic terminals and accessibility. Leaving also removes backing group access.
+.PARAMETER Authentication
+DeviceCode (default) or Browser. Organizational sign-in policies still apply.
+.PARAMETER TenantId
+Optional tenant GUID restricting sign-in.
+.PARAMETER GroupId
+One or more exact team GUIDs, validated against your memberships before changes.
+.PARAMETER ListOnly
+List your team names and IDs without changing memberships.
+.PARAMETER NonInteractive
+Skip selection prompts with explicit IDs and WhatIf or Confirm:$false. This does
+not make Microsoft authentication unattended. Can also be used with ListOnly.
+.PARAMETER Interface
+Auto (default), Rich or Plain. Unsupported rich terminals fall back to plain mode.
+.PARAMETER NoAnimation
+Disable activity spinners while retaining rich styling.
+.PARAMETER PassThru
+Return structured objects instead of displaying the CLI summary.
+.PARAMETER LoginTimeoutSeconds
+Maximum sign-in wait, in seconds (default 60). Browser tabs cannot be monitored.
+.PARAMETER NoBrowser
+Do not open the Microsoft device login page automatically.
+.PARAMETER Demo
+Try the interface with offline example teams, without Microsoft authentication.
+.EXAMPLE
+./letMeRemove.ps1 -WhatIf
+.EXAMPLE
+./letMeRemove.ps1 -GroupId '00000000-0000-0000-0000-000000000000' -Confirm:$false
+.EXAMPLE
+./letMeRemove.ps1 -Demo
+.EXAMPLE
+./letMeRemove.ps1 -ListOnly -PassThru | Export-Csv ./my-teams.csv -NoTypeInformation
+#>
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+param(
+    [ValidateSet('DeviceCode', 'Browser')][string] $Authentication = 'DeviceCode',
+    [guid] $TenantId = [guid]::Empty,
+    [guid[]] $GroupId,
+    [switch] $ListOnly,
+    [switch] $NonInteractive,
+    [ValidateSet('Auto', 'Rich', 'Plain')][string] $Interface = 'Auto',
+    [switch] $NoAnimation,
+    [switch] $PassThru,
+    [switch] $Demo,
+    [switch] $NoBrowser,
+    [ValidateRange(1, 900)][int] $LoginTimeoutSeconds = 60,
+    [Parameter(DontShow)][switch] $WorkerMode
+)
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+try {
+    if (-not [Console]::IsInputRedirected -and -not [Console]::IsOutputRedirected -and $Host.UI.SupportsVirtualTerminal) {
+        [Console]::Write("`e[2J`e[H")
     }
-
-    if (-not $moduleSpectre) {
-      Write-Host "Failed to install module PwshSpectreConsole`nTry do it yourself by:`nInstall-Module -Name PwshSpectreConsole -Force -AllowClobber"
-      Exit
+    Import-Module (Join-Path $PSScriptRoot 'src/LetMeRemove.psd1') -Force -ErrorAction Stop
+    # Dedicated CLI worker: even a blocked native SDK cannot trap the launcher.
+    # PassThru stays in-process to preserve actual PowerShell objects in pipelines.
+    if (-not $WorkerMode -and -not $PassThru) {
+        $launchOptions = @{}
+        foreach ($key in $PSBoundParameters.Keys) {
+            if ($key -ne 'WorkerMode') {
+                $value = $PSBoundParameters[$key]
+                $launchOptions[$key] = if ($value -is [System.Management.Automation.SwitchParameter]) { $value.IsPresent } else { $value }
+            }
+        }
+        $launchOptions.LoginTimeoutSeconds = $LoginTimeoutSeconds
+        $code = & (Get-Module LetMeRemove) { param($o,$t) Invoke-SupervisedCli -Options $o -LoginTimeoutSeconds $t } $launchOptions $LoginTimeoutSeconds
+        exit $code
     }
-
-    Write-Host "All required modules are installed! :)"
-}
-
-
-# Connect and get the email.
-
-Write-SpectreHost "[cyan]=== letMeRemove 🚪 ===[/]`n"
-Write-SpectreHost "[yellow]Log-in in your browser...[/]"
-$script:acc = $null
-
-Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Connecting to Microsoft Teams..." -ScriptBlock {
-    $script:acc = Connect-MicrosoftTeams | Select-Object -ExpandProperty "Account"
-}
-
-if (-not $script:acc) {
-  Write-SpectreHost "[red]Impossible to connect to the Microsoft Account.[/]"
-  Exit
-}
-
-Write-SpectreHost "[green]Logged in with:[/] $script:acc`n"
-
-$script:all_teams = $null
-
-Invoke-SpectreCommandWithStatus -Spinner "Dots" -Title "Fetching your teams..." -ScriptBlock {
-    $script:all_teams = Get-Team -User $acc -ProgressAction SilentlyContinue
-}
-
-
-if (-not $script:all_teams) {
-    Write-SpectreHost "[red]No teams found for this account. Exiting.[/]"
-    Disconnect-MicrosoftTeams
-    Exit
-}
-
-# Display enrolled teams as a table
-$tableData = for ($i = 0; $i -lt $script:all_teams.Count; $i++) {
-    [PSCustomObject]@{ "#" = $i + 1; Team = $script:all_teams[$i].DisplayName }
-}
-Format-SpectreTable -Data $tableData -Title "Enrolled Teams" -Color "cyan"
-
-$script:teamNames = $script:all_teams | ForEach-Object { $_.DisplayName }
-
-# Selection 
-$selectedTeams = Read-SpectreMultiSelection `
-    -Title "Select teams to remove yourself from [grey](SPACE to select, ENTER to confirm)[/]" `
-    -Choices $script:teamNames `
-    -Color "yellow"
-
-if (-not $selectedTeams) {
-    Write-SpectreHost "[red]No teams selected. Exiting.[/]"
-    Disconnect-MicrosoftTeams
-    Exit
-}
-
-# Confirmation
-$confirmData = $selectedTeams | ForEach-Object { [PSCustomObject]@{ Team = $_ } }
-Format-SpectreTable -Data $confirmData -Title "Teams to Leave" -Color "yellow"
-
-$confirm = Read-SpectreText `
-    -Prompt "Confirm leaving the above [yellow]$($selectedTeams.Count)[/] team(s)? [grey][[y/N]][/]" `
-    -AnswerColor "yellow"
-
-if ($confirm -notmatch '^[Yy]$') {
-    Write-SpectreHost "[grey]Aborted. No changes made.[/]"
-    Disconnect-MicrosoftTeams
-    Exit
-}
-
-Invoke-SpectreCommandWithProgress -ScriptBlock {
-    param($ctx)
-    $task = $ctx.AddTask("[yellow]Removing from teams...[/]", $true, $selectedTeams.Count)
-    foreach ($name in $selectedTeams) {
-        $script:team = $script:all_teams | Where-Object { $_.DisplayName -eq $name }
-        Remove-TeamUser -GroupId $script:team.GroupId -User $script:acc
-        Write-SpectreHost "[green]Removed from:[/] $name"
-        $task.Increment(1)
+    if ($Demo) {
+        if ($GroupId -or $ListOnly -or $NonInteractive -or $PassThru -or
+            $PSBoundParameters.ContainsKey('Authentication') -or $PSBoundParameters.ContainsKey('TenantId')) {
+            throw '-Demo only accepts interface, animation and common display options.'
+        }
+        Invoke-LetMeRemoveDemo -Interface $Interface -NoAnimation:$NoAnimation
+        exit 0
     }
+    $options = @{}
+    foreach ($key in $PSBoundParameters.Keys) {
+        if ($key -notin @('Demo', 'PassThru', 'WorkerMode')) { $options[$key] = $PSBoundParameters[$key] }
+    }
+    $results = @(Invoke-LetMeRemove @options)
+    if ($PassThru) { $results }
+    else {
+        try { Show-LetMeRemoveResult -Results $results -Interface $(if ($NonInteractive) { 'Plain' } else { $Interface }) }
+        catch {
+            Write-Warning 'Could not render the summary. Showing plain results; no requests will be repeated.'
+            $results | Format-Table -AutoSize -Wrap | Out-Host
+        }
+    }
+    if (-not $ListOnly -and @($results | Where-Object Status -EQ 'Failed').Count -gt 0) { exit 2 }
+    exit 0
 }
-
-$summary = $selectedTeams | ForEach-Object {
-    [PSCustomObject]@{ Team = $_; Status = "[green]✓ Removed[/]" }
+catch [OperationCanceledException] {
+    Write-Host 'Cancelled.'
+    exit 130
 }
-Format-SpectreTable -Data $summary -Title "Summary" -Color "green" -AllowMarkup
-
-Write-SpectreHost "`n[grey]Disconnecting from Teams...[/]"
-Disconnect-MicrosoftTeams
+catch [System.Management.Automation.PipelineStoppedException] { exit 130 }
+catch {
+    Write-Error -Message $_.Exception.Message -ErrorAction Continue
+    exit 1
+}

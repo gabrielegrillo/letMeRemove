@@ -1,0 +1,32 @@
+name: Report a problem
+description: Help us reproduce a login, selection or departure problem.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include passwords, tokens, sign-in codes, account details or unredacted tenant/team IDs.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Include expected behavior and steps to reproduce.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and terminal
+      placeholder: Fedora / GNOME Terminal, macOS / iTerm2, Windows / Windows Terminal
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: PowerShell and module versions
+      description: Paste redacted output from the version commands in the troubleshooting guide.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Redacted error and interface mode
+      description: Does it also happen with -Interface Plain or in -Demo?
