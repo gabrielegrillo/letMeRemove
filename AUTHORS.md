@@ -4,8 +4,8 @@ letMeRemove is authored and maintained by:
 
 | Name | GitHub |
 | --- | --- |
-| **Matteo Marzano** | [pxxyco](https://github.com/pxxyco) |
 | **Gabriele Grillo** | [gabrielegrillo](https://github.com/gabrielegrillo) |
+| **Matteo Marzano** | [pxxyco](https://github.com/pxxyco) |
 
 Both maintain the tool, its terminal experience and its documentation.
 
