@@ -8,7 +8,6 @@
   user's existing shell. Preserve in-process structured-output and module modes.
 - Add regression checks for blocked native login, timeout termination, worker
   cleanup, supervised preview and existing-shell interruption.
-
 - Large ASCII wordmark with a cyan-to-magenta palette and `[+]` session logs.
 - Replaced Spectre-driven redraws and status spinners with a bundled ANSI/.NET
   engine. Navigation paints only changed rows in one write; buffered keys share
@@ -17,8 +16,9 @@
   actions execute directly, preserving PowerShell output and error semantics.
 - Cached search matches, Unicode-aware label fitting, word-wrapped result cards
   and viewport cleanup on resize. No separate UI module or .NET SDK required.
-- README quick starts in 18 languages, with a shared language index.
-- Matteo Marzano (pxxyco) and Gabriele Grillo (gabrielegrillo) credited as authors and maintainers.
+- README quick starts in English and Italian, with a shared language index. The
+  16 unmaintained translations were removed.
+- Gabriele Grillo (gabrielegrillo) and Matteo Marzano (pxxyco) credited as authors and maintainers.
 
 ## 2.1.0 — 2026-11-01
 

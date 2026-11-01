@@ -5,7 +5,7 @@
 Choose the teams you no longer need, review your selection, and leave them from
 your terminal. Made for PowerShell on **Windows, macOS and Linux**.
 
-[🌐 18 languages](docs/languages.md) · [Italiano](docs/languages/README.it.md) · [Install](docs/install.md) · [Daily use](docs/usage.md) ·
+[🌐 Quick starts in English and Italian](docs/languages.md) · [Italiano](docs/languages/README.it.md) · [Install](docs/install.md) · [Daily use](docs/usage.md) ·
 [All commands](docs/commands.md) · [Get help](docs/troubleshooting.md)
 
 ## Get ready
@@ -44,8 +44,8 @@ The Microsoft login page opens automatically; enter the temporary code shown in
 the terminal. Use `-NoBrowser` to open the page yourself. The tool never asks for your
 password. Login expires after **60 seconds** by default; press **Ctrl+C** to cancel
 an unfinished login. In the selection screen, **type to search**, use **↑ / ↓** to move,
-**Space** to select and **Enter** to review. **Esc** cancels. **Ctrl+A** selects all teams (press again to clear); Enter reviews
-the selection before confirmation.
+**Space** to select and **Enter** to review your selection. **Esc** cancels. **Ctrl+A** selects
+all teams; press it again to clear.
 
 A large ASCII wordmark welcomes you, followed by concise `[+]` session logs.
 You get live selection counts, adaptive pages, framed previews, an indeterminate
@@ -92,13 +92,14 @@ Your Microsoft account and organization must permit the operation. Tenant polici
 may restrict login or departure, and the last team owner cannot be removed.
 There is no rollback for a submitted departure request.
 
-To help improve the tool, read [Contributing](CONTRIBUTING.md).
+To help improve the tool, read [Contributing](CONTRIBUTING.md). AI-assisted
+contributions follow the [AI policy](AI_POLICY.md).
 Licensed under the GNU GPL; see [COPYING](COPYING).
 
 ## Authors and maintainers
 
-**[Matteo Marzano (pxxyco) (pxxyco)](https://github.com/pxxyco)** and **[Gabriele Grillo (gabrielegrillo)](https://github.com/gabrielegrillo)**.
-[Full credits](AUTHORS.md) · [All README languages](docs/languages.md)
+**[Gabriele Grillo (gabrielegrillo)](https://github.com/gabrielegrillo)** and **[Matteo Marzano (pxxyco)](https://github.com/pxxyco)**.
+[Full credits](AUTHORS.md) · [All quick starts](docs/languages.md)
 
-The quick starts are translated; CLI messages and detailed reference guides remain
-in English.
+English and Italian quick starts are available; CLI messages and detailed reference
+guides remain in English.

@@ -17,6 +17,13 @@ The offline suite does not require MicrosoftTeams, credentials or a tenant.
 The bundled C# terminal renderer is compiled and tested by PowerShell; no external
 UI package, .NET SDK or tenant is needed for these checks.
 
+## AI-assisted contributions
+
+AI-assisted contributions are welcome. Disclose material AI assistance in the pull
+request and review every generated change yourself. You remain responsible for its
+behavior, tests and licensing. Follow the [AI policy](AI_POLICY.md), especially for
+authentication, membership removal, security reports and translations.
+
 ## Structure
 
 | Path | Responsibility |
@@ -54,7 +61,7 @@ Contributions use the GNU GPL terms in [COPYING](COPYING).
 
 ## Maintainers
 
-Matteo Marzano (pxxyco) and [Gabriele Grillo (gabrielegrillo)](https://github.com/gabrielegrillo).
+Gabriele Grillo (gabrielegrillo) and [Matteo Marzano (pxxyco)](https://github.com/pxxyco).
 See [AUTHORS.md](AUTHORS.md) for credits and [docs/languages.md](docs/languages.md)
 for translated README files. When user-facing behavior changes, update each
 localized quick start as well as the English reference. The CLI stays in English.

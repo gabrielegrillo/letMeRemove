@@ -5,8 +5,8 @@
 Scegli i team da lasciare, controlla il riepilogo e conferma l'uscita direttamente
 dal terminale. Per **Windows, macOS e Linux**, con PowerShell 7.2 o successivo.
 
-[🌐 18 lingue](../../docs/languages.md) · [English](../../README.md) · [Installazione](../../docs/install.md) · [Guida ai tasti](../../docs/usage.md) ·
-[Comandi](../../docs/commands.md) · [Problemi e soluzioni](../../docs/troubleshooting.md)
+[🌐 Guide rapide in inglese e italiano](../languages.md) · [English](../../README.md) · [Installazione](../install.md) · [Guida ai tasti](../usage.md) ·
+[Comandi](../commands.md) · [Problemi e soluzioni](../troubleshooting.md)
 
 ## Inizia qui
 
@@ -75,14 +75,15 @@ per comparire in Teams; il tool non offre un annullamento delle richieste inviat
 L'ultimo proprietario non può essere rimosso e le regole della tua organizzazione
 restano valide.
 
-Le guide di dettaglio sono in inglese. Consulta [problemi e soluzioni](../../docs/troubleshooting.md)
-per errori di accesso o terminale e [comandi](../../docs/commands.md) per esportare risultati
-con `-PassThru`. Licenza GNU GPL: [COPYING](../../COPYING).
+Le guide di dettaglio sono in inglese. Consulta [problemi e soluzioni](../troubleshooting.md)
+per errori di accesso o terminale e [comandi](../commands.md) per esportare risultati
+con `-PassThru`. Per i contributi con strumenti di AI, vedi la
+[politica sull'uso dell'AI](../../AI_POLICY.md). Licenza GNU GPL: [COPYING](../../COPYING).
 
 ## Autori e manutentori
 
-**Matteo Marzano (pxxyco)** e **[Gabriele Grillo (gabrielegrillo)](https://github.com/gabrielegrillo)**.
-[Crediti](../../AUTHORS.md) · [README in tutte le lingue disponibili](../../docs/languages.md)
+**[Gabriele Grillo (gabrielegrillo)](https://github.com/gabrielegrillo)** e **Matteo Marzano (pxxyco)**.
+[Crediti](../../AUTHORS.md) · [Tutte le guide rapide](../languages.md)
 
-I README sono disponibili in 18 lingue. I messaggi dell'interfaccia e le guide
-di dettaglio restano in inglese.
+Le guide rapide sono disponibili in inglese e italiano. I messaggi dell'interfaccia
+e le guide di dettaglio restano in inglese.

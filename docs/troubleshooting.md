@@ -87,7 +87,7 @@ For security concerns, see [security reporting](../SECURITY.md).
 
 ## Fetching or navigation flickers
 
-Version 2.2 uses a bundled differential renderer: movement updates only changed
+The current renderer uses a bundled differential engine: movement updates only changed
 rows, held keys are batched and rendering is capped at 30 frames per second. The
 fetch indicator is an indeterminate single-line animation with elapsed time, not
 a percentage or an estimate of how many teams remain. It runs at 10 updates per
@@ -108,9 +108,6 @@ worker during login even when a native Microsoft authentication call is stuck.
 The existing PowerShell shell remains open. In the picker Ctrl+C is also handled
 as an explicit cancellation. On macOS
 use Control, not Command. Ctrl+Z on POSIX shells suspends rather than terminates.
-
-Translated quick starts live in `docs/languages/`. The earlier name `i18n` was a
-common abbreviation for “internationalization”; the folder now uses a plain name.
 
 If Ctrl+C still produces no response, check whether your terminal is using it to
 copy selected text instead of delivering it to the running application. Include

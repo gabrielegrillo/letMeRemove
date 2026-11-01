@@ -3,7 +3,8 @@
 ```powershell
 ./letMeRemove.ps1 [-Authentication DeviceCode|Browser] [-TenantId <guid>]
                  [-GroupId <guid[]>] [-ListOnly] [-NonInteractive]
-                 [-Interface Auto|Rich|Plain] [-NoAnimation] [-PassThru]
+                 [-Interface Auto|Rich|Plain] [-NoAnimation] [-NoBrowser]
+                 [-LoginTimeoutSeconds <seconds>] [-PassThru]
                  [-WhatIf] [-Confirm]
 ./letMeRemove.ps1 -Demo [-Interface Auto|Rich|Plain] [-NoAnimation]
 ```
@@ -20,6 +21,8 @@ Use `pwsh -NoProfile -File ./letMeRemove.ps1` to launch from another shell.
 | `NonInteractive` | Off | Require explicit selection and confirmation options; login still requires a user |
 | `Interface` | `Auto` | Choose rich styling when supported, request it explicitly, or use plain mode |
 | `NoAnimation` | Off | Disable activity spinners, retaining rich styling |
+| `NoBrowser` | Off | Do not open the Microsoft login page automatically |
+| `LoginTimeoutSeconds` | `60` | Maximum sign-in wait in seconds; accepted range 1–900 |
 | `PassThru` | Off | Return structured objects instead of the CLI summary |
 | `Demo` | Off | Explore local examples without MicrosoftTeams or a Microsoft connection |
 | `WhatIf` | Off | Authenticate and read teams, but never submit removals |

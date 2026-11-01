@@ -17,13 +17,14 @@ does not alter repository trust or bypass authentication or tenant restrictions.
 ## Report a security concern
 
 Do not post exploitable security details, credentials, tokens or sign-in codes in a
-public issue. If the repository provides GitHub private vulnerability reporting,
-use its **Security → Report a vulnerability** option. Otherwise contact the
-repository maintainer through an existing private channel before sharing details.
-No private email address is designated in this repository.
+public issue. Do not paste them into AI tools either. If the repository provides
+GitHub private vulnerability reporting, use its **Security → Report a vulnerability**
+option. Otherwise contact the repository maintainer through an existing private
+channel before sharing details. No private email address is designated in this
+repository. See the [AI policy](AI_POLICY.md) for AI-assisted reports.
 
-The authors and maintainers are **Matteo Marzano (pxxyco)** and **Gabriele Grillo
-(gabrielegrillo)**; see [AUTHORS.md](AUTHORS.md).
+The authors and maintainers are **Gabriele Grillo (gabrielegrillo)** and **Matteo
+Marzano (pxxyco)**; see [AUTHORS.md](AUTHORS.md).
 
 For ordinary crashes or UI problems, use the bug report template with redacted
 output. See [troubleshooting](docs/troubleshooting.md) for useful version information.

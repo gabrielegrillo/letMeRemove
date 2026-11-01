@@ -46,8 +46,8 @@ Install-Module MicrosoftTeams -MinimumVersion 8.0.0 -Scope CurrentUser -Reposito
 The native ANSI/.NET interface ships with the tool: no Spectre module or separate
 .NET SDK is required. PowerShell compiles the small bundled renderer in memory on
 first use; no binaries are downloaded or written. If dynamic compilation is blocked
-by your organization, the plain menu remains available. `-PlainOnly` is retained
-as a compatibility switch for the installer and no longer changes dependencies.
+by your organization, the plain menu remains available. The installation helper
+still accepts `-PlainOnly` for compatibility; it no longer changes dependencies.
 There is no background download or dependency installation when launching the tool.
 
 ## 3. Try the interface
